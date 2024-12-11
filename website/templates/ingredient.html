@@ -209,14 +209,14 @@
     <div class="overlay" id="overlay">
         <div class="add-ingredient-form">
             <h3>Add Ingredient</h3>
-            <form action="/ingredient">
+            <form action="/ingredient" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="ingredient-name" class="form-label">Ingredient Name</label>
                     <input type="text" class="form-control" id="ingredient-name" name="name" required>
                 </div>
                 <div class="mb-3">
                     <label for="ingredient-image" class="form-label">Upload Image</label>
-                    <input type="file" class="form-control" id="ingredient-image" accept="image/*" onchange="previewImage(event)" name = "image">
+                    <input type="file" class="form-control" id="ingredient-image" accept="image/*" onchange="previewImage(event)" name = "image" required>
                     <img id="image-preview" src="#" alt="Image Preview" style="display: none; margin-top: 10px; max-width: 100%;"/>
                 </div>
 

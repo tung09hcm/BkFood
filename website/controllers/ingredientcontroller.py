@@ -20,3 +20,7 @@ class IngredientController:
         nutrition = json.loads(nutrition)
         return nutrition["data"]
 
+    def add_ingredient(self,image,name,calcium, calories, carbohydrates, fats, fiber, iron, potassium, protein, vitaminA, vitaminC):
+        print("ingredientcontroller run")
+        self.ingredient_model.add_ingre(image,name,calcium, calories, carbohydrates, fats, fiber, iron, potassium, protein, vitaminA, vitaminC)
+

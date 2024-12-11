@@ -23,11 +23,13 @@ def food_detail():
 @views.route('/ingredient', methods = ['GET', 'POST'])
 def ingredientscreen():
     if request.method == 'POST':
+        print("phương thức post đến /ingredient")
+
         UPLOAD_FOLDER = './uploads'
         if not os.path.exists(UPLOAD_FOLDER):
             os.makedirs(UPLOAD_FOLDER)
 
-        ingredient_name = request.form.get('name')
+        name = request.form.get('name')
         file = request.files['image']
         calcium = request.form.get('calcium')
         calories = request.form.get('calories')
@@ -40,25 +42,13 @@ def ingredientscreen():
         vitaminA = request.form.get('vitamin-a')
         vitaminC = request.form.get('vitamin-c')
         if file:
+            print("vào đc lưu file")
             file_path = os.path.join(UPLOAD_FOLDER, file.filename)
             file_path = file_path.replace("\\", "/")
             file.save(file_path)
-            print("file_path "+ file_path)
-            with open(file_path, 'rb') as f:
-                response = supabase.storage.from_("ingredient").upload(
-                    path=f"public/{file.filename}",  # Đường dẫn ảnh trong bucket
-                    file=f,
-                    file_options={
-                        "cache-control": "3600",
-                        "upsert": "false",
-                    },
-                )
-                print("==============================")
-                print("response: ")
-                print(response)
-                print("==============================")
-                full_path = response.full_path
-                print("Full Path:", full_path)
+            print("file_path_in_view "+ file_path)
+            ingredient_controller = IngredientController()
+            ingredient_controller.add_ingredient(file_path,name,calcium, calories, carbohydrates, fats, fiber, iron, potassium, protein, vitaminA, vitaminC)
 
     ingredient_controller = IngredientController()
     ingredients = ingredient_controller.get_ingredients()
