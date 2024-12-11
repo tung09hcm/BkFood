@@ -17,7 +17,8 @@ class IngredientModel(BaseModel):
         response = self.get_client().table("ingre_contains_nutrition").select("*").eq("ingre_id", id).execute()
         return response.json()  # Trả về dữ liệu dưới dạng JSON
     
-    def add_ingre(self, file_path,name,calcium, calories, carbohydrates, fats, fiber, iron, potassium, protein, vitaminA, vitaminC):
+    def add_ingre(self, file_path,name,calcium, calories, carbohydrates, fats, 
+                  fiber, iron, potassium, protein, vitaminA, vitaminC):
         print("file_path_in_ingre_model: "+ file_path)
         try:
             with open(file_path, 'rb') as f:
@@ -51,6 +52,39 @@ class IngredientModel(BaseModel):
                 id = data['id']
                 
                 print(id)
+
+                response = (
+                    self.get_client()
+                    .table("ingre_contains_nutrition")
+                    .insert([
+                        {"ingre_id": id, "nutrition_id": "Calcium", "amount": calcium},
+                        {"ingre_id": id, "nutrition_id": "Calories", "amount": calories},
+                        {"ingre_id": id, "nutrition_id": "Carbohydrates", "amount": carbohydrates},
+                        {"ingre_id": id, "nutrition_id": "Fats", "amount": fats},
+                        {"ingre_id": id, "nutrition_id": "Fiber", "amount": fiber},
+                        {"ingre_id": id, "nutrition_id": "Iron", "amount": iron},
+                        {"ingre_id": id, "nutrition_id": "Potassium", "amount": potassium},
+                        {"ingre_id": id, "nutrition_id": "Protein", "amount": protein},
+                        {"ingre_id": id, "nutrition_id": "Vitamin C", "amount": vitaminC},
+                        {"ingre_id": id, "nutrition_id": "Vitamin A", "amount": vitaminA},
+                    ])
+                    .execute()
+                )
+
                 # lấy id từ response vừa thêm vào bảng ingredient
         except Exception as e:
             print(f"An error occurred: {e}")
+
+    def vote(self, id, vote):
+        response = (
+            self.get_client()
+            .table("user_Vote_Ingredient")
+            .insert([
+                {"ingre_id": id, "user_id": session["user"]["id"], "vote": vote},
+            ])
+            .execute()
+        )
+        print("====================")
+        print("vote action response")
+        print(response)
+        print("====================")

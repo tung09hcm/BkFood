@@ -213,7 +213,7 @@
                 <span class="star" data-value="5">&#9733;</span>
             </div>
             <div class="text-center">
-                <button class="btn btn-outline-warning">Gửi Đánh Giá</button>
+                <button class="btn btn-outline-warning" onclick="submitRating()">Gửi Đánh Giá</button>
             </div>
         </div>
 
@@ -244,6 +244,45 @@
             // Hiển thị số sao được đánh giá
             console.log(`Rated: ${clickedValue} star(s)`);
         }
+        function submitRating() {
+            const urlParts = window.location.pathname.split('/');
+            const productId = urlParts[urlParts.length - 1]; 
+            const stars = document.querySelectorAll('.star');
+            let selectedRating = 0;
+
+            // Tìm số sao được chọn
+            stars.forEach(star => {
+                if (star.classList.contains('active')) {
+                    selectedRating = star.getAttribute('data-value');
+                }
+            });
+
+            if (selectedRating > 0) {
+                // Gửi dữ liệu lên server bằng Fetch API
+                fetch(`/ingredient_detail/rate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: productId,
+                        rating: selectedRating
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Rating submitted:', data.message);
+                    alert('Cảm ơn bạn đã đánh giá!');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra. Vui lòng thử lại.');
+                });
+            } else {
+                alert('Vui lòng chọn số sao!');
+            }
+        }
+
     </script>
 </body>
 </html>

@@ -24,3 +24,5 @@ class IngredientController:
         print("ingredientcontroller run")
         self.ingredient_model.add_ingre(image,name,calcium, calories, carbohydrates, fats, fiber, iron, potassium, protein, vitaminA, vitaminC)
 
+    def vote(self, id_ingre, vote):
+        self.ingredient_model.vote(id_ingre, vote)
