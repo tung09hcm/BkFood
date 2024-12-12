@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Details</title>
+</head>
+<body>
+    <!-- Hiển thị thông tin của food -->
+    {% for i in food %}
+    <h2>Food Details</h2>
+    <p>Food ID: {{ i.id }}</p>
+    <p>Food Name: {{ i.name }}</p>
+    {% endfor %}
+    <h3>Nutrition Totals:</h3>
+    <ul>
+        {% for nutrition, total in nutrition_totals.items() %}
+        <li>{{ nutrition }}: {{ total | round(3) }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Hiển thị danh sách ingredients -->
+    <h2>Ingredients</h2>
+    <ul>
+        {% for ingredient in ingredients %}
+        <li>
+            Ingredient ID: {{ ingredient.ingredient.id }}  Ingredient Name: {{ ingredient.ingredient.name }}   
+            Nutrition:
+            {% for i in ingredient.ingredient.ingre_contains_nutrition %}
+            {{ i.nutrition_id }} {{ (i.amount * ingredient.amount) | round(3) }}
+            {% endfor %}
+            <br>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+

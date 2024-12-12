@@ -6,6 +6,8 @@
     <title>BKFood</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
         body {
             background-color: #000000;
@@ -164,6 +166,23 @@
             height: 100px;
             object-fit: cover; 
         }
+        .ingredient-row {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Thêm khoảng cách giữa các phần tử */
+        }
+
+        .ingredient-row .form-select {
+            flex: 2; /* Chiếm 2 phần không gian */
+        }
+
+        .ingredient-row .form-control {
+            flex: 1; /* Chiếm 1 phần không gian */
+        }
+
+        .ingredient-row button {
+            flex: 0; /* Chiếm không gian vừa đủ cho nút */
+        }
     </style>
 </head>
 <body>
@@ -175,7 +194,7 @@
         <h3>Dashboard</h3>
         <a href="#overview">Overview</a>
         <a href="/food">Food</a>
-        <a href="#ingredient">Ingredient</a>
+        <a href="/ingredient">Ingredient</a>
         <a href="#exercise">Exercise</a>
         <a href="#logs">Logs</a>
         <div class="logout">
@@ -186,19 +205,19 @@
     <!-- Main Content -->
     <div class="content">
         <div class="content-header">
-            <h1>Ingredient List</h1>
-            <button class="btn btn-success" onclick="showAddIngredientForm()">+ Add Ingredient</button>
+            <h1>Food List</h1>
+            <button class="btn btn-success" onclick="showAddIngredientForm()">+ Add Food</button>
         </div>
 
         <!-- Ingredient Items -->
-        {% for ingredient in ingredients %}
-            <div class="ingredient-item" onclick="redirectToDetail({{ ingredient.id }})">
+        {% for food in foods %}
+            <div class="ingredient-item" onclick="redirectToDetail({{ food.id }})">
                 <div class="d-flex align-items-center">
-                    <img src="{{ ingredient.url_image }}" alt="Ingredient">
-                    <span class="ms-3">{{ ingredient.name }}</span>
+                    <img src="{{ food.url_image }}" alt="Food">
+                    <span class="ms-3">{{ food.name }}</span>
                 </div>
                 <div>
-                    <span>{{ ingredient.vote }} ({{ ingredient.number_vote }})</span>
+                    <span>{{ food.vote }} ({{ food.number_vote }})</span>
                 </div>
             </div>
         {% endfor %}
@@ -208,74 +227,42 @@
     <!-- Overlay and Add Ingredient Form -->
     <div class="overlay" id="overlay">
         <div class="add-ingredient-form">
-            <h3>Add Ingredient</h3>
-            <form action="/ingredient" method="post" enctype="multipart/form-data">
+            <h3>Add Food</h3>
+            <form action="/food" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
-                    <label for="ingredient-name" class="form-label">Ingredient Name</label>
+                    <label for="ingredient-name" class="form-label">Food Name</label>
                     <input type="text" class="form-control" id="ingredient-name" name="name" required>
+                    <label for="ingredient-name" class="form-label">Description</label>
+                    <input type="text" class="form-control" id="ingredient-name" name="description" required>
+                    <label for="ingredient-name" class="form-label">Cooking Method</label>
+                    <input type="text" class="form-control" id="ingredient-name" name="cooking_method" required>
                 </div>
                 <div class="mb-3">
+
                     <label for="ingredient-image" class="form-label">Upload Image</label>
                     <input type="file" class="form-control" id="ingredient-image" accept="image/*" onchange="previewImage(event)" name = "image" required>
                     <img id="image-preview" src="#" alt="Image Preview" style="display: none; margin-top: 10px; max-width: 100%;"/>
-                </div>
 
-                <div class="ingredient-nutrition">
-                    <div>
-                        <label for="calcium" class="form-label">Calcium (g)</label>
-                        <input type="number" class="form-control" id="calcium" name = "calcium">
+                    <label for="ingredient-select" class="form-label">Ingredients</label>
+                    <div id="ingredients-container">
+                        <div class="d-flex align-items-center mb-2 ingredient-row">
+                            <select class="form-select me-2 flex-grow-5" name="ingredients[]" required>
+                                <option value="">Choose an ingredient</option>
+                                {% for ingredient in ingredients %}
+                                    <option value="{{ ingredient.id }}">{{ ingredient.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <input type="number" class="form-control mx-2 flex-grow-3" name="weights[]" placeholder="g" min="1" required>
+                            <button type="button" class="btn btn-link text-danger px-2 flex-grow-2" onclick="removeIngredientRow(this)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <label for="calories" class="form-label">Calories (g)</label>
-                        <input type="number" class="form-control" id="calories" name ="calories" >
-                    </div>
+                    <button type="button" class="btn btn-outline-primary mt-2" onclick="addIngredientRow()">+ Add Ingredient</button>
                 </div>
+                
 
-                <div class="ingredient-nutrition">
-                    <div>
-                        <label for="carbohydrates" class="form-label">Carbohydrates (g)</label>
-                        <input type="number" class="form-control" id="carbohydrates" name = "carbohydrates">
-                    </div>
-                    <div>
-                        <label for="fats" class="form-label">Fats (g)</label>
-                        <input type="number" class="form-control" id="fats" name = "fats">
-                    </div>
-                </div>
-
-                <div class="ingredient-nutrition">
-                    <div>
-                        <label for="fiber" class="form-label">Fiber (g)</label>
-                        <input type="number" class="form-control" id="fiber" name = "fiber">
-                    </div>
-                    <div>
-                        <label for="iron" class="form-label">Iron (g)</label>
-                        <input type="number" class="form-control" id="iron" name = "iron">
-                    </div>
-                </div>
-
-                <div class="ingredient-nutrition">
-                    <div>
-                        <label for="potassium" class="form-label">Potassium (g)</label>
-                        <input type="number" class="form-control" id="potassium" name = "potassium">
-                    </div>
-                    <div>
-                        <label for="protein" class="form-label">Protein (g)</label>
-                        <input type="number" class="form-control" id="protein" name = "protein">
-                    </div>
-                </div>
-
-                <div class="ingredient-nutrition">
-                    <div>
-                        <label for="vitamin-a" class="form-label">Vitamin A (g)</label>
-                        <input type="number" class="form-control" id="vitamin-a" name = "vitamin-a">
-                    </div>
-                    <div>
-                        <label for="vitamin-c" class="form-label">Vitamin C (g)</label>
-                        <input type="number" class="form-control" id="vitamin-c" name = "vitamin-c">
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-success">Save Ingredient</button>
+                <button type="submit" class="btn btn-success">Save Food</button>
                 <button type="button" class="btn btn-outline-danger" onclick="hideAddIngredientForm()">Cancel</button>
             </form>
         </div>
@@ -308,7 +295,37 @@
         }
     
         function redirectToDetail(id) {
-            window.location.href = `/ingredient_detail/${id}`; // Đường dẫn đến trang chi tiết
+            window.location.href = `/food_detail/${id}`; // Đường dẫn đến trang chi tiết
+        }
+
+        function addIngredientRow() {
+            const container = document.getElementById('ingredients-container');
+
+            // Tạo một hàng nguyên liệu mới
+            const newRow = document.createElement('div');
+            newRow.classList.add('d-flex', 'align-items-center', 'mb-2', 'ingredient-row');
+
+            newRow.innerHTML = `
+                <select class="form-select me-2 flex-grow-5" name="ingredients[]" required>
+                    <option value="">Choose an ingredient</option>
+                    {% for ingredient in ingredients %}
+                        <option value="{{ ingredient.id }}">{{ ingredient.name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="number" class="form-control flex-grow-3 mx-2" name="weights[]" placeholder="g" min="1" required>
+                <button type="button" class="btn btn-link text-danger px-2 flex-grow-2" onclick="removeIngredientRow(this)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+
+            // Thêm hàng mới vào container
+            container.appendChild(newRow);
+        }
+
+        function removeIngredientRow(button) {
+            // Xóa hàng nguyên liệu khi nhấn nút "Remove"
+            const row = button.parentElement;
+            row.remove();
         }
     </script>
 </body>
