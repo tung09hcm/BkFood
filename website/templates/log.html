@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Dashboard{% endblock %}</title>
+    <title>BkFood</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -115,6 +115,30 @@
             }
         }
     </style>
+    <style>
+        .history-section {
+            margin-bottom: 30px;
+            border: 1px solid #2c2c2c;
+            border-radius: 10px;
+            background-color: #121212;
+            padding: 20px;
+        }
+        .history-section h4 {
+            border-bottom: 1px solid #2c2c2c;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .history-item {
+            margin-bottom: 15px;
+        }
+        .history-item h5 {
+            margin: 0;
+        }
+        .badge {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+    </style>
 </head>
 <body>
     <!-- Sidebar Toggle Button -->
@@ -123,10 +147,10 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <h3>Dashboard</h3>
-        <a href="#overview">Overview</a>
-        <a href="#food">Food</a>
-        <a href="#ingredient">Ingredient</a>
-        <a href="#exercise">Exercise</a>
+        <a href="/">Overview</a>
+        <a href="/food">Food</a>
+        <a href="/ingredient">Ingredient</a>
+        <a href="/exercise">Exercise</a>
         <a href="/logs">Logs</a>
         <div class="logout">
             <a href="/logout" class="btn">Logout</a>
@@ -135,8 +159,49 @@
 
     <!-- Main Content -->
     <div class="content">
-        
+        <div class="content-header">
+            <h1>Nutrition and Exercise History</h1>
+        </div>
+    
+        {% for meal_day in meals|groupby('date') %}
+        <div class="history-section">
+            <h4 id="meal-day" style="color: #28a745">{{ meal_day[0] }}</h4> <!-- Ngày -->
+    
+            <!-- Meals -->
+            <div class="history-item">
+                <h5 style="color: #ffc107">Meals</h5>
+                <ul>
+                    {% for meal in meal_day[1] %}
+                    <li>
+                        {{ meal['meal_type'] }}: {{ meal['food']['name'] }} ({{ meal['amount'] }} servings)
+                        <!-- <img src="{{ meal['food']['url_image'] }}" alt="{{ meal['food']['name'] }}" width="50" height="50"> -->
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+    
+            <!-- Exercises -->
+            <div class="history-item">
+                <h5 style="color: #dc3545">Exercises</h5>
+                <ul>
+                    {% for exercise_day in exercises|groupby('date') %}
+                        {% if exercise_day[0] == meal_day[0] %}
+                            {% for exercise in exercise_day[1] %}
+                                <li>
+                                    {{ exercise['exercise']['name'] }} - {{ exercise['exercise']['calo'] }} kcal 
+                                    ({{ exercise['exercise']['time'] }} minutes)
+                                    <!-- <img src="{{ exercise['exercise']['url_img'] }}" alt="{{ exercise['exercise']['name'] }}" width="50" height="50"> -->
+                                </li>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
     </div>
+    
+
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
@@ -145,6 +210,25 @@
             const sidebar = document.querySelector('.sidebar');
             sidebar.classList.toggle('open');
         }
+    </script>
+    <script>
+        // Lấy ngày từ phần tử HTML
+        const mealDayStr = document.getElementById("meal-day").innerText;
+        
+        // Chuyển chuỗi thành đối tượng Date
+        const mealDay = new Date(mealDayStr);
+
+        // Mảng tên tháng
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        // Định dạng ngày theo kiểu 'YYYY - Month - DD'
+        const formattedDate = `${mealDay.getFullYear()} - ${months[mealDay.getMonth()]} - ${mealDay.getDate()}`;
+
+        // Cập nhật lại phần tử HTML với ngày đã được định dạng
+        document.getElementById("meal-day").innerText = formattedDate;
     </script>
 </body>
 </html>

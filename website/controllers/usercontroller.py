@@ -13,3 +13,6 @@ class UserController:
         response = self.user_model.verify_user(email, password)
         return response
        
+    def update(self,name,email,age,gender,height,weight, id):
+        response = self.user_model.update(name,email,age,gender,height,weight, id)
+        return response

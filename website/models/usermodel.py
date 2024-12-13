@@ -49,5 +49,11 @@ class UserModel(BaseModel):
             print("Mật khẩu sai!")
             return None
 
-
+    def update(self,name,email,age,gender,height,weight,id):
+        response = self.get_client().table("user_profile").update({"name": name, "email": email, "Age": age, 
+                                                                   "Gender": gender, "Height": height, "Weight": weight}).eq("id", id).execute()
+        response = response.json()
+        response = json.loads(response)                                            
+        user_data = response["data"]
+        return user_data
         

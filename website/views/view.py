@@ -1,18 +1,102 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, jsonify  # type: ignore
 from website.controllers.ingredientcontroller import IngredientController
 from website.controllers.foodcontroller import FoodController
+from website.controllers.exercisecontroller import ExerciseController
+from website.controllers.usercontroller import UserController
+from website.controllers.mealcontroller import MealController
 import os
 import uuid
 views = Blueprint('views', __name__)
 
+@views.route('/logExercise', methods = ['GET', 'POST'])
+def logExercise():
+    if request.method == 'POST':
+        exercise = request.form.get('exercise')
+        id = session["user"]["id"]
+        exercise_controller = ExerciseController()
+        exercises = exercise_controller.user_do_exercise(exercise,id)
+        print(exercises)
+
+        meal_controller = MealController()
+        exercise_controller = ExerciseController()
+        id = session["user"]["id"]
+        meals = meal_controller.get_all_meal(id)
+        exercises = exercise_controller.get_all_exercise_by_userid(id)
+
+        return render_template("log.html", meals = meals, exercises = exercises)
+
+@views.route('/logFood', methods = ['GET', 'POST'])
+def logFood():
+    if request.method == 'POST':
+        meal_type = request.form.get('meal_type')
+        food = request.form.get('food')
+        amount = request.form.get('quantity')
+        id = session["user"]["id"]
+        meal_controller = MealController()
+        meal_controller.insert_meal(id, meal_type, food, amount)
+
+        meal_controller = MealController()
+        exercise_controller = ExerciseController()
+        id = session["user"]["id"]
+        meals = meal_controller.get_all_meal(id)
+        exercises = exercise_controller.get_all_exercise_by_userid(id)
+
+        return render_template("log.html", meals = meals, exercises = exercises)
+
+
+@views.route('/logs')
+def historyview():
+    meal_controller = MealController()
+    exercise_controller = ExerciseController()
+    id = session["user"]["id"]
+    meals = meal_controller.get_all_meal(id)
+    exercises = exercise_controller.get_all_exercise_by_userid(id)
+    print(meals)
+    print(exercises)
+    return render_template("log.html", meals = meals, exercises = exercises)
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  
+
+@views.route('/editUser', methods = ['GET', 'POST'])
+def editUserProfile():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        age = request.form.get('age')
+        gender = request.form.get('gender')
+        height = request.form.get('height')
+        weight = request.form.get('weight')
+        id = session["user"]["id"]
+        user_controller = UserController()
+        user_data = user_controller.update(name,email,age,gender,height,weight, id)
+        session["user"] = user_data[0]
+        food_controller = FoodController()
+        foods = food_controller.get_foods()
+        exercise_controller = ExerciseController()
+        exercises = exercise_controller.get_exercises()
+        return render_template("home.html", user = user_data[0], foods = foods, exercises = exercises)
 
 @views.route('/')
 def home():
     if "user" in session:
         user = session["user"]
-        return render_template("home.html")
+        food_controller = FoodController()
+        foods = food_controller.get_foods()
+        exercise_controller = ExerciseController()
+        exercises = exercise_controller.get_exercises()
+        return render_template("home.html", user = user, foods = foods, exercises = exercises)
     else: 
         return redirect(url_for('auth.login'))
+    
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  
+
+@views.route('/exercise')
+def exercisescreen():
+    exercise_controller = ExerciseController()
+    exercises = exercise_controller.get_exercises()
+
+    return render_template("exercise.html", exercises = exercises)
     
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #   
 
