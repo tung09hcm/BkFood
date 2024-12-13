@@ -35,12 +35,12 @@ Welcome to the **BkFood App**! This project aims to help users improve their hea
 3. **Install dependencies**:
    OR
    ```bash
-   pip install -r requirements.txt  # For Python projects
+   pip install -r requirements.txt
    ```
 
 4. **Run the application**:
    ```bash
-   python main.py  # For Python projects
+   python main.py
    ```
 
 ---
