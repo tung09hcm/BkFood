@@ -24,7 +24,7 @@ Welcome to the **BkFood App**! This project aims to help users improve their hea
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/meal-fitness-manager.git
+   git clone https://github.com/tung09hcm/BkFood.git
    ```
 
 2. **Navigate to the project directory**:
