@@ -116,3 +116,13 @@ class MealModel(BaseModel):
             .execute()
         )
         return response.json()
+
+    def get_all_daily_intake(self, user_id):
+        response = (
+            self.get_client()
+            .table("daily_intake")
+            .select("*")
+            .eq("user_id", user_id)
+            .execute()
+        )
+        return response.json()

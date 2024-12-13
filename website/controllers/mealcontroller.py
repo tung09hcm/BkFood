@@ -15,3 +15,8 @@ class MealController:
         response = self.meal_model.get_all_meal(user_id)
         response = json.loads(response)
         return response["data"]
+    
+    def get_all_daily_intake(self, user_id):
+        response = self.meal_model.get_all_daily_intake(user_id)
+        response = json.loads(response)
+        return response["data"]

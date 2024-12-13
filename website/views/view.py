@@ -80,11 +80,14 @@ def editUserProfile():
 def home():
     if "user" in session:
         user = session["user"]
+        id = session["user"]["id"]
         food_controller = FoodController()
         foods = food_controller.get_foods()
         exercise_controller = ExerciseController()
         exercises = exercise_controller.get_exercises()
-        return render_template("home.html", user = user, foods = foods, exercises = exercises)
+        meal_controller = MealController()
+        meals = meal_controller.get_all_daily_intake(id)
+        return render_template("home.html", user = user, foods = foods, exercises = exercises, meals = meals)
     else: 
         return redirect(url_for('auth.login'))
     
