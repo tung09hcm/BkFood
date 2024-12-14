@@ -46,7 +46,7 @@ class FoodModel(BaseModel):
                         self.get_client()
                         .table("food_contains_ingre")
                         .insert([
-                            {"food_id": id, "ingre_id": ingredient_list[i], "amount": amount_list[i]},
+                            {"food_id": id, "ingre_id": ingredient_list[i], "amount": float(int(amount_list[i]) / 100)}
                         ])
                         .execute()
                     )
